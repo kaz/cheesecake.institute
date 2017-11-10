@@ -1,0 +1,25 @@
+version: 2
+jobs:
+  build:
+    working_directory: /tmp/blog
+    docker:
+      - image: circleci/golang
+    steps:
+      - checkout
+      - run:
+          name: Install hugo
+          command: go get -u -v github.com/gohugoio/hugo
+      - run:
+          name: Generate pages
+          command: hugo
+      - run:
+          name: Archive pages
+          command: tar zcvf public.tar.gz public
+      - store_artifacts:
+          path: /tmp/blog/public.tar.gz
+          destination: public.tar.gz
+      - Deploy:
+          name: Deploy to server
+          command: |
+            scp -o "StrictHostKeyChecking=no" public.tar.gz http@cheesecake.institute:/tmp
+            ssh -o "StrictHostKeyChecking=no" http@cheesecake.institute "tar zxvf /tmp/public.tar.gz -C /tmp && rm -rf ~/cheesecake.institute && mv /tmp/public ~/cheesecake.institute && rm /tmp/public.tar.gz"
