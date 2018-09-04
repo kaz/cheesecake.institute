@@ -1,0 +1,7 @@
+baseURL: /
+title: チズケ研究会
+
+hasCJKLanguage: true
+defaultContentLanguage: ja
+
+theme: hyde
